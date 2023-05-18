@@ -45,7 +45,7 @@ J2 = 1.082e-3;
 %       flag_megaconst = 1 --> Starlink Megaconstellation, taken from tle
 %       flag_megaconst = 2 --> OneWeb Megaconstellation, taken from tle 
 
-flag_megaconst = 1;
+flag_megaconst = 0;
 
 if flag_megaconst == 0 % Ideal mega constellation equally distributed 
     n_planes = 24; 
@@ -53,7 +53,7 @@ if flag_megaconst == 0 % Ideal mega constellation equally distributed
     n_sat = n_planes*n_sat_per_plane;
     
     % initializing the parameters
-    parfor i_sat = 1:n_sat
+    for i_sat = 1:n_sat
 %     Sat.ID                               % satellite identificator
 %     Sat.Health                           %  0 = ok, 1 = fault 
 %     Sat.Right_Ascension_0                % right ascention [rad]
