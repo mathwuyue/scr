@@ -23,6 +23,7 @@
 %                   only J2 based propagation is used (no-drag) 
 %   - 15 Apr. 2023: sgp4 adaption
 %   - 1 May 2023: check visibilities 
+%   - 1 July 2023: dataset saved in csv format 
 
 %% ------------------------------------------------------------------------
 clear all 
@@ -48,7 +49,7 @@ J2 = 1.082e-3;
 flag_megaconst = 0;
 
 if flag_megaconst == 0 % Ideal mega constellation equally distributed 
-    n_planes = 24; 
+    n_planes = 5; 
     n_sat_per_plane = 10;
     n_sat = n_planes*n_sat_per_plane;
     
@@ -192,20 +193,27 @@ else
 end
 
 
+
 %% Post Processing
 margin_altitude = 100; %km (above Earth surface)
 
 is_visible=nan(n_sat,n_sat,length(time));
 disp('Check inter-satellite visibility')
+ 
+
 % check for inter-satellite visibility
-parfor i_sat = 1:n_sat
-    for j_sat = 1 : n_sat
-        message_str = ['SatA = ',num2str(i_sat),' SatB = ',num2str(j_sat)];
-        disp(message_str);
-        for t_time = 1: L_t
-            [is_visible(i_sat,j_sat,t_time)] = check_sat_2_sat_link(Sat(i_sat).P_ECI(:,t_time),Sat(j_sat).P_ECI(:,t_time), margin_altitude);
+for t_time = 1 : L_t
+    message_time = ['visibility at time = ' num2str(time(t_time)) 's'];
+    disp(message_time);
+    for i_sat = 1:n_sat
+        for j_sat = 1 : n_sat
+            %message_str = ['SatA = ',num2str(i_sat),' SatB = ',num2str(j_sat)];
+            %disp(message_str);    
+            [is_visible(i_sat,j_sat, t_time)] = check_sat_2_sat_link(Sat(i_sat).P_ECI(:,t_time),Sat(j_sat).P_ECI(:,t_time), margin_altitude);
         end
-    end 
+    end
+    name_file_visibility = ['visibility_at_time_' num2str(time(t_time)) '.csv'];
+    writematrix(is_visible(:,:,t_time),name_file_visibility);
 end
 
 
